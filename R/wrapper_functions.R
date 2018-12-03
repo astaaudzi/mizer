@@ -1272,11 +1272,25 @@ steady <- function(params, effort = 0, t_max = 50, t_per = 2, tol = 10^(-2),
         n_bb <- sim@n_bb[dim(sim@n_bb)[1],] ##AA
         n_aa <- sim@n_aa[dim(sim@n_aa)[1],] ##AA
         new_rdi <- getRDI(p, n, n_pp, n_bb, n_aa, intakeScalar = sim@intTempScalar[,,1],metScalar = sim@metTempScalar[,,1]) ##AA
-        deviation <- max(abs((new_rdi - old_rdi)/old_rdi)[!is.na(p@A)])
-
+        ## If large species are present, then the old_rdi becomes zero, which when you divide by this, crashed the model
+        ## Need to write a condition that if old_rdi is zero, then deviation = 0 instead of the division
+        
+        
+        temp_rdi <- rep(0, time=length(old_rdi))
+        
+        for(i in 1:length(old_rdi))
+          if(old_rdi[i] != 0) temp_rdi[i] <- (new_rdi[i] - old_rdi[i])/old_rdi[i] else temp_rdi[i] <- 1
+      
+        #deviation <- max(abs((new_rdi - old_rdi)/old_rdi)[!is.na(p@A)])
+        deviation <- max(abs(temp_rdi)[!is.na(p@A)])
+        
+        #print(old_rdi)
+        
         if (deviation < tol) {
             break
         }
+        
+        
         old_rdi <- new_rdi
         
     }
