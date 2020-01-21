@@ -1028,7 +1028,7 @@ plotGrowthCurves <- function(object, species,
         ws <- array(dim = c(length(species), length(age)),
                     dimnames = list("Species" = species, "Age" = age))
         g <- getEGrowth(sim@params, sim@n[dim(sim@n)[1], , ], 
-                        sim@n_pp[dim(sim@n)[1], ], sim@n_bb[dim(sim@n)[1], ], sim@n_aa[dim(sim@n)[1], ], sim@intTempScalar[,,1], sim@metTempScalar[,,1]) #AA
+                        sim@n_pp[dim(sim@n)[1], ], sim@n_bb[dim(sim@n)[1], ], sim@n_aa[dim(sim@n)[1], ], sim@intTempScalar[,,(dim(sim@temperature)[1])], sim@metTempScalar[,,dim(sim@temperature)[1]]) #AA
         for (j in 1:length(species)) {
             i <- idx[j]
             g_fn <- stats::approxfun(sim@params@w, g[i, ])
@@ -1099,7 +1099,7 @@ plotGrowthCurves <- function(object, species,
         ws <- array(dim = c(length(species), length(age)),
                     dimnames = list(Species = species, Age = age))
         g <- getEGrowth(params, params@initial_n, params@initial_n_pp, params@initial_n_bb, params@initial_n_aa, 
-                        intakeScalar = sim@intTempScalar[,,1], metScalar = sim@metTempScalar[,,1]) ##AA
+                        intakeScalar = sim@intTempScalar[,,(dim(sim@temperature)[1])], metScalar = sim@metTempScalar[,,(dim(sim@temperature)[1])]) ##AA
         for (j in 1:length(species)) {
             i <- idx[j]
             g_fn <- stats::approxfun(params@w, g[i, ])
