@@ -733,6 +733,17 @@ multispeciesParams <- function(object, interaction,
         object$alpha[missing] <- 0.6
     }
     
+    # Sort out cost of growth (alpha_g ) column (Max Lindmark)
+    if (!("alpha_g" %in% colnames(object))) {
+  #    message("Note: \tNo alpha_g column in species data frame so using 1 (no additional cost of growth)")
+      object$alpha_g <- 1
+    }
+    missing <- is.na(object$alpha_g)
+    if (any(missing)) {
+      object$alpha_g[missing] <- 1
+    }
+    
+    
     # If no erepro (reproductive efficiency), then set to 1
     if (!("erepro" %in% colnames(object))) {
         object$erepro <- rep(NA, no_sp)
@@ -744,11 +755,11 @@ multispeciesParams <- function(object, interaction,
     
     # If no sel_func column in species_params, set to 'knife_edge'
     if (!("sel_func" %in% colnames(object))) {
-        message("\tNote: No sel_func column in species data frame. Setting selectivity to be 'knife_edge' for all species.")
+      ##Temp  message("\tNote: No sel_func column in species data frame. Setting selectivity to be 'knife_edge' for all species.")
         object$sel_func <- 'knife_edge'
         # Set default selectivity size
         if (!("knife_edge_size" %in% colnames(object))) {
-            message("Note: \tNo knife_edge_size column in species data frame. Setting knife edge selectivity equal to w_mat.")
+          ##Temp      message("Note: \tNo knife_edge_size column in species data frame. Setting knife edge selectivity equal to w_mat.")
             object$knife_edge_size <- object$w_mat
         }
     }
@@ -823,6 +834,8 @@ multispeciesParams <- function(object, interaction,
         object$ks[missing] <- object$h[missing] * 0.2
     }
     
+    ## Warnings about additional background spectra
+    
     # Sort out avail_PP column
     if (!("avail_PP" %in% colnames(object))) {
       message("Note: \tNo avail_PP column in species data frame so setting availability of plankton spectrum to 1")
@@ -860,7 +873,7 @@ multispeciesParams <- function(object, interaction,
     
     # Sort out activation energy (ea) column for four rates: metabolism
     if (!("ea_met" %in% colnames(object))) {
-      message("Note: \tNo ea_met column in species data frame so setting activation energy (ea) for metabolism to 0.63")
+    message("Note: \tNo ea_met column in species data frame so setting activation energy (ea) for metabolism to 0.63")
       object$ea_met <- 0.63
     }
     missing <- is.na(object$ea_met)
@@ -924,34 +937,12 @@ multispeciesParams <- function(object, interaction,
 #      object$ed_int[missing] <- object$ea_int *10
 #    }
     
-##Unimodal responses make sense for intake and metabolism, but not for maturity or mortatlity 
-# So perhaps we should not even give the option in the species parameter file and then in the code just use zeros for these values to enable the use of the universal equation
-#Also for maturity we need a different equation, because we are changing species parameter. Or we are chaning the psi function, and just raise the proportion to reproduction for each size class?
 
-# For maturity temperature deactivation does not make sense, so we set it to zero here without any warnings 
-#    if (!("ed_mat" %in% colnames(object))) {
-#    message("Note: \tNo ed_mat column provided, setting deactivation energy for maturation to 0, giving exponential increase only")
-#      object$ed_mat <- 0
-#    }
-#    missing <- is.na(object$ed_mat)
-#    if (any(missing)) {
-#      object$ed_mat[missing] <- 0
-#    }   
+     ## Now we sort out size scalars setting size dependent activtion rates. THese make sense for metabolism, intake and mortality
     
-# For mortality temperature deactivation does not make sense, so we set it to zero 
-#    if (!("ed_mor" %in% colnames(object))) {
-#      message("Note: \tNo ed_mor column provided, setting deactivation energy for mortality to 0, giving exponential increase only")
-#      object$ed_mor <- 0
-#    }
-#    missing <- is.na(object$ed_mor)
-#    if (any(missing)) {
-#      object$ed_mor[missing] <- 0
-#    }   
-
-## Now we sort out size scalars setting size dependent activtion rates. THese make sense for metabolism, intake and mortality
     # Sort out size scalars (ca) column for three rates: metabolism
     if (!("ca_met" %in% colnames(object))) {
-    message("Note: \tNo ca_met column in species data frame so setting it to 0, giving size independent temp scaling of metabolism")
+      message("Note: \tNo ca_met column in species data frame so setting it to 0, giving size independent temp scaling of metabolism")
       object$ca_met <- 0
     }
     missing <- is.na(object$ca_met)
@@ -971,17 +962,7 @@ multispeciesParams <- function(object, interaction,
             object$ca_int[missing] <- 0
     }
     
-# For maturity size dependent activation does not make sense. Just set it to zero 
-#    if (!("ca_mat" %in% colnames(object))) {
-#    message("Note: \tNo ca_mat column in species data frame so setting it to 0, giving size independent temp scaling of maturation")
-      object$ca_mat <- 0
-#    }
-#    missing <- is.na(object$ca_mat)
-#    if (any(missing)) {
-#      object$ca_mat[missing] <- 0
-#    }
-    
-    # Sort out size scalars (ca) column for three rates: mortality
+  # Sort out size scalars (ca) column for three rates: mortality
     if (!("ca_mor" %in% colnames(object))) {
       message("Note: \tNo ca_mor column in species data frame so setting it to 0, giving size independent temp scaling of mortality")
       object$ca_mor <- 0
@@ -992,16 +973,6 @@ multispeciesParams <- function(object, interaction,
       object$ca_mor[missing] <- 0
     }
 
-    # ML: Sort out cost of growth (alpha_g ) column
-    if (!("alpha_g" %in% colnames(object))) {
-      message("Note: \tNo alpha_g column in species data frame so using 1 (no additional cost of growth)")
-      object$alpha_g <- 1
-    }
-    missing <- is.na(object$alpha_g)
-    if (any(missing)) {
-      object$alpha_g[missing] <- 1
-    }
-    
  ##Now deactivation rate size scalar cd for metabolism and intake
     # Sort out size scalars (ca) column for four rates: metabolism
 #    if (!("cd_met" %in% colnames(object))) {
@@ -1268,6 +1239,7 @@ multispeciesParams <- function(object, interaction,
     res@cc_bb[res@w_full > w_bb_cutoff] <- 0  # set density of sizes < benthic cutoff size
     res@cc_bb[res@w_full < min_w_bb] <- 0 #set density of sizes < min size of benthos ##AAdec
     res@initial_n_bb <- res@cc_bb  # put this as initial density
+    
     #algal spectum -- 
     res@rr_aa[] <- r_aa * res@w_full^(n - 1) # weight specific algal growth rate
     res@cc_aa[] <- kappa_alg *res@w_full^(-lambda_alg) # algal carrying capacity
