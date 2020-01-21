@@ -893,8 +893,14 @@ getSMort <- function(object, n, n_pp, n_bb, n_aa, intakeScalar, metScalar,
 
         mu_S <- e # assign net energy to the initial starvation mortality matrix
 
-        x <- t(t(mu_S)/(0.1*object@w)) # apply the mortality formula to the whole matrix
+        #x_old <- t(t(mu_S)/(0.1*object@w)) # apply the mortality formula to the whole matrix
+        #print (dim(x_old))
+        #print(x_old[c(3:6, 50:60)])
         #remember, 0.1 is a parameter here, which is a scaling constant on how negative e translates to starvation mortality. For a 100g fish with a negative e of -1, it will give starvation value of 0.1. For a 10 g fish with e of -1, it will give mortality of 1. This seems reasonable for a start, but a more conmplex relationship could be explored in the future 
+        ### TODO ### a small value added here to avoid division by zero, but not sure this is ideal
+        x <- t(t(mu_S)/((1/(object@c+1e-12))*object@w))
+        #print (dim(x))
+        #print(x[c(3:6, 50:60)])
         mu_S[mu_S<0] <- x[x<0] # replace the negative values of e by the starvation mortality
         mu_S[mu_S>0] <- 0 # replace the positive values of e by 0
 
