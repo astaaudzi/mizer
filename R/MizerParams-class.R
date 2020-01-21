@@ -300,6 +300,7 @@ validMizerParams <- function(object) {
 #' ##AAsp
 #' @slot kappa_ben Magnitude of benthic resource spectrum.
 #' @slot kappa_alg Magnitude of algal resource spectrum.
+#' @slot c Starvation mortality coefficient (same for all species). Default is 0, giving no starvation moratlity
 #' @slot A Abundance multipliers.
 #' @slot linecolour A named vector of colour values, named by species. Used 
 #'   to give consistent colours to species in plots.
@@ -365,6 +366,7 @@ setClass(
         initial_n_aa = "numeric",
         lambda_alg = "numeric",
         kappa_alg = "numeric",
+        c = "numeric",
         t_ref = "numeric"
     ),
     prototype = prototype(
@@ -404,6 +406,7 @@ setClass(
         initial_n_aa = NA_real_,
         lambda_alg = NA_real_,
         kappa_alg = NA_real_,
+        c = NA_real_,
         A = NA_real_,
         linecolour = NA_character_,
         linetype = NA_character_,
@@ -627,6 +630,7 @@ emptyParams <- function(object, min_w = 0.001, max_w = 1000, no_w = 100,
 #' @param r_aa Growth rate of the benthos productivity. Default value is 2, as for plankton 
 #' @param kappa_alg Carrying capacity of the algal resource spectrum. Default
 #'       value is 1e11, as for plankton 
+#' @param c Starvation mortality coeffienct. Defaul is 0 giving no starvation mortality; value of 10 gives 0.1/year #'        mortality when energy deficit is 10%       
 #' @param lambda_alg Exponent of the algal resource spectrum. Default value is
 #'       (2+q-n).
 #' @param w_aa_cutoff The cut off size of the algal spectrum.
@@ -682,7 +686,7 @@ multispeciesParams <- function(object, interaction,
                     kappa = 1e11, lambda = (2 + q - n), w_pp_cutoff = 10,
                     min_w_bb = 1e-10, kappa_ben = 1e11, lambda_ben = (2 + q - n), w_bb_cutoff = 10, r_bb = 2,
                     min_w_aa = 1e-10, kappa_alg = 1e11, lambda_alg = (2 + q - n), w_aa_cutoff = 100, r_aa = 2,
-                    t_ref = 10,
+                    t_ref = 10, c = 0,
                     f0 = 0.6, z0pre = 0.6, z0exp = n - 1,
                     store_kernel = (no_w <=100)) {
     
@@ -972,6 +976,19 @@ multispeciesParams <- function(object, interaction,
       message("Note: \tNo value for ca_mor provided so setting size specific scalar to 0, giving size independent temp scaling of mortality")
       object$ca_mor[missing] <- 0
     }
+    
+    ### TODO: delete this perhaps and think about temperature dependent maturaiton function
+    # Sort out size scalars (ca) column for maturity - not really used now, just added to consistency
+    if (!("ca_mat" %in% colnames(object))) {
+    #  message("Note: \tNo ca_met column in species data frame so setting it to 0, giving size independent temp scaling of metabolism")
+      object$ca_mat <- 0
+    }
+    missing <- is.na(object$ca_met)
+    if (any(missing)) {
+    #  message("Note: \tNo value for ca_met provided so setting size specific scalar to 0, giving size independent temp scaling of metabolism")
+      object$ca_mat[missing] <- 0
+    }
+    
 
  ##Now deactivation rate size scalar cd for metabolism and intake
     # Sort out size scalars (ca) column for four rates: metabolism
@@ -1098,6 +1115,7 @@ multispeciesParams <- function(object, interaction,
     res@kappa_ben <- kappa_ben
     res@lambda_alg <- lambda_alg
     res@kappa_alg <- kappa_alg
+    res@c <- c
     res@t_ref <- t_ref
     #print(res@w)
     
