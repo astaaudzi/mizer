@@ -1161,15 +1161,11 @@ getDietComp<- function(object, n,  n_pp, n_bb, n_aa, intakeScalar, diet_comp_all
   
   #Biomass of resource as prey; scaled to reflect pred size kernel; might have to change if we start using interaction with resource spectrum like Hartvig et al. 2011
   
-  print("here1")
-  
   #Note that we multiply the amount available by the availability parameter in the species parameter file 
   b_background <- (sweep( object@pred_kernel[,,], c(3), object@dw_full*object@w_full*n_pp, "*")) * object@species_params$avail_PP
   b_benthos <- sweep( object@pred_kernel[,,], c(3), object@dw_full*object@w_full*n_bb, "*") * object@species_params$avail_BB
   b_algae <- sweep( object@pred_kernel[,,], c(3), object@dw_full*object@w_full*n_aa, "*") * object@species_params$avail_AA
   
-  print("here2")
-
   #Search rate *  feeding level * predator biomass
   b_background<- sweep(b_background, c(1,2), object@search_vol * intakeScalar,"*") #Scale up by search volume
   b_background<- sweep(b_background, c(1,2), feedinglevel,"*") # Scale according to feeding level. Prey eaten: g prey / year / g predator

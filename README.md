@@ -1,4 +1,4 @@
-# mizer
+# mizerRewire
 
 mizer is a package that implements size-based ecological models.
 The package has been developed to model marine ecosystems that are subject

@@ -1,4 +1,4 @@
-mizer 1.1
+mizerRewire 1.1
 -----------
 
 * Added function to get diet of predators
@@ -38,7 +38,7 @@ mizer 1.1
 -- Added more unit tests
 
 
-mizer 1.0
+mizerRewire 1.0
 -----------
 
 * Fixed bugs in how the start time of a simulation was handled. This leads to
@@ -73,7 +73,7 @@ mizer 1.0
 * Add a test of the numeric solution against an analytic solution.
 
 
-mizer 0.4
+mizerRewire 0.4
 -----------
 
 * Improvements made to the speed by evaluating convolution sums via fft,
@@ -83,20 +83,20 @@ mizer 0.4
   and to document the new home on github and new maintainers.
 
 
-mizer 0.3
+mizerRewire 0.3
 -----------
 
 * Improvements made to the speed of the simulations. Remaining bottle necks are the sweep statements in getPhiPrey() and getPredRate().
 * Moved tests to new suggested folder.
 * Minor changes to documentation to pass new check requirements.
 
-mizer 0.2
+mizerRewire 0.2
 -----------
 
 * Release to coincide with the submission of the MEE paper. No major changes. Just minor bug fixes.
 
 
-mizer 0.1
+mizerRewire 0.1
 -----------
 
 * Beta release - just about works but still some gremlins to sort out.
