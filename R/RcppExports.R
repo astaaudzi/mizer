@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 inner_project_loop <- function(no_sp, no_w, n, A, B, S, w_min_idx) {
-    .Call('_mizer_inner_project_loop', PACKAGE = 'mizer', no_sp, no_w, n, A, B, S, w_min_idx)
+    .Call('_mizerRewire_inner_project_loop', PACKAGE = 'mizerRewire', no_sp, no_w, n, A, B, S, w_min_idx)
 }
 
