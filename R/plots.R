@@ -1052,8 +1052,8 @@ plotGrowthCurves <- function(object, species,
                              colour = Species, linetype = Species, size = Species))
 #        }
         y_label <- if (percentage) "Percent of maximum size" else "Size [g]"
-        linesize <- rep(0.8, length(params@linetype))
-        names(linesize) <- names(params@linetype)
+        linesize <- rep(0.8, length(sim@params@linetype))
+        names(linesize) <- names(sim@params@linetype)
         linesize[highlight] <- 1.6
         p <- p +
             scale_x_continuous(name = "Age [Years]") +
